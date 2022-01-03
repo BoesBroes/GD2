@@ -29,9 +29,27 @@ public class TaskGameMode : Task
     //[Header("Hint")]
     //public Hint hint;
 
+    [Header("Stats")]
+    public Slider anger;
+    public Slider happiness;
+    public Slider social;
+
+    [Header("Sliders")]
+    public Image angerImage;
+    public Image happinessImage;
+    public Image socialImage;
+
+    public GameObject gameOverPanel;
+
+    private bool gameOver = false;
+
     void Start()
     {
         PlaySound(startSceneSound);
+
+        ChangeColor(angerImage, anger.value);
+        ChangeColor(happinessImage, happiness.value);
+        ChangeColor(socialImage, social.value);
 
         tasks.Clear();
 
@@ -62,11 +80,6 @@ public class TaskGameMode : Task
                 beginScreen.SetActive(false);
             }
 
-
-            //Start the game after the start sound has been played
-            //currentTask.gameObject.SetActive(true);
-            //currentTask.StartTask();
-
         }
         if (levelFinished && startSoundPlayed)
         {
@@ -76,13 +89,11 @@ public class TaskGameMode : Task
             }
         }
 
-
-        currentTask.gameObject.SetActive(true);
-        currentTask.StartTask();
-        //buttons.SetActive(true);
-            
-        
-
+        if(!gameOver)
+        {
+            currentTask.gameObject.SetActive(true);
+            currentTask.StartTask();
+        }    
     }
 
     public void StartGame()
@@ -115,9 +126,36 @@ public class TaskGameMode : Task
     }
 
 
-    public void TaskFinished()
+    public void TaskFinished(float angerChange, float happinessChange, float socialChange)
     {
-        GoToNextTask();
+        anger.value += angerChange;
+        ChangeColor(angerImage, anger.value);
+
+        happiness.value += happinessChange;
+        ChangeColor(happinessImage, happiness.value);
+
+        social.value += socialChange;
+        ChangeColor(socialImage, social.value);
+
+        if (anger.value <= 0 || happiness.value <=0 || social.value <= 0)
+        {
+            Debug.Log("GameOver");
+            gameOver = true;
+            tasks[taskIndex].SetActive(false);
+            gameOverPanel.SetActive(true);
+        }
+
+        else
+        {
+            GoToNextTask();
+        }
+    }
+
+    private void ChangeColor(Image sliderFill, float value)
+    {
+        Color statsColor = new Color(1 - value, value, 0, 1);
+
+        sliderFill.color = statsColor;
     }
 
     private void GoToNextTask()
@@ -152,34 +190,6 @@ public class TaskGameMode : Task
         }
     }
 
-    public void BackToTutorial()
-    {
-        GoBackToTutorial();
-    }
-
-    private void GoBackToTutorial()
-    {
-        if (taskIndex - 1 < tasks.Count) //if same panel is used check if its active, if active dont deactivate and activate (breaks sound)
-        {
-            if (tasks[taskIndex] != tasks[taskIndex - 1] && tasks[taskIndex].activeSelf)
-            {
-                tasks[taskIndex].SetActive(false);
-            }
-        }
-
-        //disable last task and enable tutorial
-        currentTask.gameObject.SetActive(false);
-    }
-
-    public void ReturnToLastTask()
-    {
-        currentTask.gameObject.SetActive(true);
-        PlaySound(currentTask.startSound);
-    }
-
-    /// <summary>
-    /// When all the tasks in a level is done call this function. when set up properly it will open an endscreen with a button to go back to overworld
-    /// </summary>
     private void EndLevel()
     {
 

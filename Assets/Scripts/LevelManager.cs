@@ -26,7 +26,9 @@ public class LevelManager : MonoBehaviour
         }
         else
         {
-            Destroy(gameObject);
+            Destroy(levelManager);
+            levelManager = this;
+            DontDestroyOnLoad(this); //whatever:^)
         }
 
 
@@ -42,15 +44,11 @@ public class LevelManager : MonoBehaviour
 
     public void ChangeLevel(string level)
     {
-        //loads new level if the scene exists and isnt disabled
-        if (Application.CanStreamedLevelBeLoaded(level) && !DisabledScenesList.Contains(level))
-        {
-            lastScene = SceneManager.GetActiveScene().name;
-        }
+        SceneManager.LoadScene(level);
+    }
 
-        else
-        {
-            Debug.LogError("Scene either does not exist or is disabled. Do you have the correct path?");
-        }
+    public void Quit()
+    {
+        Application.Quit();
     }
 }

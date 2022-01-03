@@ -10,55 +10,31 @@ public class Task : MonoBehaviour
 
     public TaskGameMode gameMode;
 
-    public static GameObject card;
-
-    public Rigidbody2D cardBody;
+    public GameObject card;
 
     public AudioClip startSound;
 
-    public delegate void MouseClick();
-    public static event MouseClick OnMouseClick;
-
-    public static Vector3 mousePosition;
-
-    private Vector3 offset;
-    private Vector2 mouseForce;
-
-    public static GameObject selectedObject;
 
     void Update()
     {
-        mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-        if (Input.GetMouseButtonDown(0))
+        if (card)
         {
-            if (OnMouseClick != null)
+            if (card.GetComponent<MoveCard>().isSet == true)
             {
-                OnMouseClick();
-
-                if (selectedObject)
-                {
-                    offset = selectedObject.transform.position - mousePosition;
-                }
+                EndTask();
             }
-        }
-
-        if (selectedObject)
-        {
-            selectedObject.transform.position = mousePosition + offset;
-        }
-
-        if (Input.GetMouseButtonUp(0) && selectedObject)
-        {
-            selectedObject = null;
         }
     }
 
 
 
-public void EndTask()
+    public void EndTask()
     {
-        gameMode.TaskFinished();
+        float anger = card.GetComponent<MoveCard>().anger;
+        float happiness = card.GetComponent<MoveCard>().happiness;
+        float social = card.GetComponent<MoveCard>().social;
+
+        gameMode.TaskFinished(anger, happiness, social);
     }
 
     public virtual void StartTask()
