@@ -47,9 +47,9 @@ public class TaskGameMode : Task
     {
         PlaySound(startSceneSound);
 
-        ChangeColor(angerImage, anger.value);
-        ChangeColor(happinessImage, happiness.value);
-        ChangeColor(socialImage, social.value);
+        ChangeColor(angerImage, anger.value, true);
+        ChangeColor(happinessImage, happiness.value, false);
+        ChangeColor(socialImage, social.value, false);
 
         tasks.Clear();
 
@@ -129,17 +129,19 @@ public class TaskGameMode : Task
     public void TaskFinished(float angerChange, float happinessChange, float socialChange)
     {
         anger.value += angerChange;
-        ChangeColor(angerImage, anger.value);
+        ChangeColor(angerImage, anger.value, true);
 
         happiness.value += happinessChange;
-        ChangeColor(happinessImage, happiness.value);
+        ChangeColor(happinessImage, happiness.value, false);
 
         social.value += socialChange;
-        ChangeColor(socialImage, social.value);
+        ChangeColor(socialImage, social.value, false);
 
         if (anger.value <= 0 || happiness.value <=0 || social.value <= 0)
         {
-            Debug.Log("GameOver");
+            Debug.Log("GameOver" + anger.value);
+            Debug.Log(happiness.value);
+            Debug.Log(social.value);
             gameOver = true;
             tasks[taskIndex].SetActive(false);
             gameOverPanel.SetActive(true);
@@ -151,11 +153,19 @@ public class TaskGameMode : Task
         }
     }
 
-    private void ChangeColor(Image sliderFill, float value)
+    private void ChangeColor(Image sliderFill, float value, bool anger)
     {
-        Color statsColor = new Color(1 - value, value, 0, 1);
+        if (anger)
+        {
+            Color statsColor = new Color(value, 1 -value, 0, 1);
+            sliderFill.color = statsColor;
+        }
+        else
+        {
+            Color statsColor = new Color(1 - value, value, 0, 1);
+            sliderFill.color = statsColor;
+        }
 
-        sliderFill.color = statsColor;
     }
 
     private void GoToNextTask()
