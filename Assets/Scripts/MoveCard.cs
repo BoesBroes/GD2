@@ -6,7 +6,7 @@ public class MoveCard : MonoBehaviour
 {
     // Add this script to the moveable object
     public RectTransform rectTransform;
-    Vector3 offset;
+    private Vector3 offset;
 
     public bool isSet =  false; //if decision is made
 
@@ -17,6 +17,12 @@ public class MoveCard : MonoBehaviour
 
     public bool isRight; //if bla then floats go negative
 
+    private Vector3 startPos;
+
+    public void Start()
+    {
+        startPos = rectTransform.localPosition;
+    }
     public void GetOffset()
     {
         offset = rectTransform.position - Input.mousePosition;
@@ -62,7 +68,7 @@ public class MoveCard : MonoBehaviour
     {
         if(!isSet)
         {
-            rectTransform.localPosition = new Vector3(0, 0, 0);
+            rectTransform.localPosition = startPos;
         }
     }
 }

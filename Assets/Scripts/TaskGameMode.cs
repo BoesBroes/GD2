@@ -43,6 +43,8 @@ public class TaskGameMode : Task
 
     private bool gameOver = false;
 
+    public Text endText;
+
     void Start()
     {
         PlaySound(startSceneSound);
@@ -137,11 +139,21 @@ public class TaskGameMode : Task
         social.value += socialChange;
         ChangeColor(socialImage, social.value, false);
 
-        if (anger.value <= 0 || happiness.value <=0 || social.value <= 0)
+        if (anger.value >= 1 || happiness.value <=0 || social.value <= 0)
         {
-            Debug.Log("GameOver" + anger.value);
-            Debug.Log(happiness.value);
-            Debug.Log(social.value);
+            if(anger.value >= 1)
+            {
+                endText.text = "you have become filled with anger";
+            }
+            else if(happiness.value <= 0)
+            {
+                endText.text = "you are unhappy";
+            }
+            else if(social.value <= 0)
+            {
+                endText.text = "you lost all your friends!";
+            }
+
             gameOver = true;
             tasks[taskIndex].SetActive(false);
             gameOverPanel.SetActive(true);
